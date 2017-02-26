@@ -4,8 +4,6 @@ namespace Neo4jBundle\Service;
 
 
 
-use AppBundle\Entity\CoreApp;
-
 class App
 {
 
@@ -13,7 +11,6 @@ class App
 
     public function __construct($app)
     {
-        $core = "AppBundle\\Entity\\CoreApp";
         $coreApp = new $app();
         dump($coreApp);
         die();
