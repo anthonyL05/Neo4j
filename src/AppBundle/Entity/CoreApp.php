@@ -7,6 +7,8 @@
  * Time: 19:36
  */
 namespace AppBundle\Entity;
+use Neo4jAccesBundle\Annotation\Core;
+
 /**
  * Class CoreApp
  * Class Exemple CoreApp for the base entity
@@ -14,11 +16,16 @@ namespace AppBundle\Entity;
 class CoreApp
 {
 
+    /**
+     * @Core(collection="true",name="Person")
+     */
+    private $person;
 
     /**
      * CoreApp constructor.
      */
     public function __construct()
     {
+
     }
 }
