@@ -1,3 +1,8 @@
+neo4j:
+    resource: "@Neo4jBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation

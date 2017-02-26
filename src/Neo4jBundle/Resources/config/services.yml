@@ -1,0 +1,4 @@
+services:
+    neo4j.application:
+        class: Neo4jBundle\Service\App
+        arguments: [%neo4j-app%]
