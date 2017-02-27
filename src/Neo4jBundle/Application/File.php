@@ -57,15 +57,16 @@ class File
     public function createClass($className)
     {
 
-        $use = "use Neo4jBundle\\Annotation\\Identifier; \n";
+        $use = "use Neo4jBundle\\Annotation\\Identifier; \n use Neo4jBundle\\Entity\\GlobalEntity; \n";
         $contenuClass = "/** \n *@Identifier() \n */ \n private \$id;\n";
+        $contenuClass .= "public function __construct() \n { \n  parent::__construct(); \n  } \n";
         $newClassName = explode("\\",$className);
         $newClassName = array_pop($newClassName);
         if(!class_exists($this->basePath."\\".$newClassName)) {
             $content = "<?php \n";
             $content .= "namespace " . $this->basePath . ";\n";
             $content .= $use;
-            $content .= "class " . $newClassName . "\n";
+            $content .= "class " . $newClassName . " extends GlobalEntity\n";
             $content .= "{";
             $content .= "\n";
             $content .= $contenuClass;
