@@ -30,7 +30,7 @@ class File
     {
         $this->corePath = $corePath;
         $this->paths = new ArrayCollection();
-        $this->getBasePath();
+        $this->initBasePath();
     }
 
     public function checkClass($className)
@@ -80,7 +80,7 @@ class File
     }
 
 
-    public function getBasePath()
+    public function initBasePath()
     {
 
         $basePath = explode("\\",$this->corePath);
@@ -122,6 +122,22 @@ class File
     public function containPaths($paths)
     {
         return $this->paths->contains($paths);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * @param mixed $basePath
+     */
+    public function setBasePath($basePath)
+    {
+        $this->basePath = $basePath;
     }
 
 
