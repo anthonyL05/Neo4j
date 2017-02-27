@@ -9,7 +9,9 @@
 
 namespace Neo4jBundle\Annotation\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Collections\ArrayCollection;
 use Neo4jBundle\Application\File;
+use Neo4jBundle\Application\ReflexClass;
 
 class Reader
 {
@@ -17,6 +19,8 @@ class Reader
     /** @var  \ReflectionClass $reflexionClass */
     private $reflexionClass;
 
+    /** @var  ArrayCollection $reflexionLoad */
+    private $reflexionLoad;
 
     /** @var  AnnotationReader $annotationReader */
     private $annotationReader;
@@ -30,6 +34,7 @@ class Reader
     {
         $this->file = new File($pathCore);
         $this->annotationReader = new AnnotationReader();
+        $this->reflexionLoad = new ArrayCollection();
     }
 
 
@@ -43,7 +48,7 @@ class Reader
                 {
                     if($readerProperty->name != null)
                     {
-                        $this->file->checkClass($readerProperty->name);
+                        $reflexClass = new ReflexClass($this->file->checkClass($readerProperty->name));
                     }
                     else
                     {
@@ -54,6 +59,16 @@ class Reader
                 }
             }
         }
+        foreach ($this->file->getPaths() as $path)
+        {
+            $nameClass = "\\".$this->file->getBasePath()."\\".$path;
+            $class = new $nameClass();
+            $reflexionClass = new \ReflectionClass($class);
+            foreach($reflexionClass->getProperties() as $property) {
+                dump($property);
+            }
+        }
+
     }
 
 
