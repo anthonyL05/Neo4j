@@ -45,11 +45,7 @@ class File
         else if(!$this->containPaths($className))
         {
             $className = $this->createClass($className);
-
             $nameClass = "\\".$this->basePath."\\".$className;
-            $class = new $nameClass();
-            dump($class);
-            die();
         }
     }
 
