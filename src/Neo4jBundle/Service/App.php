@@ -17,7 +17,7 @@ class App
     public function __construct($app)
     {
         $coreApp = new $app();
-        $reader = new Reader();
+        $reader = new Reader($app);
         $this->core = new Core($app,$coreApp,$reader);
     }
 

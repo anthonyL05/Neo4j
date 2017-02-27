@@ -9,6 +9,7 @@
 
 namespace Neo4jBundle\Annotation\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Neo4jBundle\Application\File;
 
 class Reader
 {
@@ -21,8 +22,13 @@ class Reader
     private $annotationReader;
 
 
-    public function __construct()
+    /** @var File $file */
+    private $file;
+
+
+    public function __construct($pathCore)
     {
+        $this->file = new File($pathCore);
         $this->annotationReader = new AnnotationReader();
     }
 
@@ -33,7 +39,19 @@ class Reader
         foreach($this->reflexionClass->getProperties() as $property) {
             $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
             if ($readerProperty) {
-                dump($readerProperty);
+                if($readerProperty->collection == true)
+                {
+                    if($readerProperty->name != null)
+                    {
+                        $this->file->checkClass($readerProperty->name);
+                    }
+                    else
+                    {
+                        /**
+                         * Todo Return exeption collection doit posséder un nom
+                         */
+                    }
+                }
             }
         }
     }
