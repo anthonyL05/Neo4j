@@ -33,6 +33,8 @@ class Core
      */
     private $reader;
 
+    private $reflexionClass = null;
+
     /**
      * core constructor.
      * @param $path
@@ -43,13 +45,24 @@ class Core
     {
         $this->path = $path;
         $this->app = $app;
+        $this->reflexionClass = new \ReflectionClass($this->app);
+        $reader->setReflexionClass($this->reflexionClass);
         $this->reader = $reader;
+
     }
 
     public function generate()
     {
-        dump("generate Class");
+        $this->reader->generateCore();
+        dump($this);
+        die();
     }
+
+
+
+
+
+
 
 
 }
