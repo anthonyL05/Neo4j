@@ -2,16 +2,19 @@
 
 namespace Neo4jBundle\Controller;
 
+
+use \AppBundle\Entity\Core;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class DefaultController extends Controller
 {
+
     /**
-     * @Route("/")
+     * @Route("/tret")
      */
-    public function indexAction()
+    public function CreeAppAction()
     {
-        return $this->render('Neo4jBundle:Default:index.html.twig');
+        die();
     }
 }

@@ -7,10 +7,10 @@
  * Time: 14:09
  */
 
-namespace Neo4jAccesBundle\Annotation;
+namespace Neo4jBundle\Annotation;
 
 
-use Doctrine\Common\Annotations\Annotation;
+use Doctrine\ORM\Mapping\Annotation;
 
 /**
  * Class Core
