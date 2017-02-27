@@ -46,6 +46,8 @@ class File
         {
             $className = $this->createClass($className);
             $nameClass = "\\".$this->basePath."\\".$className;
+            return $nameClass;
+
         }
     }
 
@@ -70,9 +72,9 @@ class File
             $newClass = fopen('..\\src\\' . $this->basePath . "\\" . $newClassName . ".php", 'a+');
             fputs($newClass, $content);
             fclose($newClass);
-            $this->addPaths($newClassName);
             $this->__autoload($className);
         }
+        $this->addPaths($newClassName);
         return $newClassName;
 
     }
