@@ -19,8 +19,6 @@ class App
         $coreApp = new $app();
         $reader = new Reader();
         $this->core = new Core($app,$coreApp,$reader);
-        dump($coreApp);
-        die();
     }
 
     public function generateApp()

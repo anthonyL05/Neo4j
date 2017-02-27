@@ -33,10 +33,7 @@ class Reader
         foreach($this->reflexionClass->getProperties() as $property) {
             $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
             if ($readerProperty) {
-
                 dump($readerProperty);
-
-
             }
         }
     }
