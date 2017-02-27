@@ -41,14 +41,17 @@ class Reader
 
     public function generateCore()
     {
+
         foreach($this->reflexionClass->getProperties() as $property) {
             $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
             if ($readerProperty) {
                 if($readerProperty->collection == true)
                 {
+
                     if($readerProperty->name != null)
                     {
-                        $reflexClass = new ReflexClass($this->file->checkClass($readerProperty->name));
+                        $this->reflexionLoad->add(new ReflexClass($this->file->checkClass($readerProperty->name)));
+
                     }
                     else
                     {
@@ -59,18 +62,55 @@ class Reader
                 }
             }
         }
+
+
+
         foreach ($this->file->getPaths() as $path)
         {
-            $nameClass = "\\".$this->file->getBasePath()."\\".$path;
-            $class = new $nameClass();
-            $reflexionClass = new \ReflectionClass($class);
+            $path = "\\".$this->file->getBasePath()."\\".$path;
+            /** @var \ReflectionClass $reflexionClass */
+            $reflexionClass = $this->getReflexionClassLoad($path);
             foreach($reflexionClass->getProperties() as $property) {
-                dump($property);
+                $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
+                if ($readerProperty) {
+                    if($readerProperty->collection == true)
+                    {
+                        if($readerProperty->name != null)
+                        {
+                           /**
+                            * TODO function pour gerer les propriete collection pour les sous entite
+                            */
+
+                        }
+                        else
+                        {
+                            /**
+                             * Todo Return exeption collection doit posséder un nom
+                             */
+                        }
+                    }
+                }
             }
         }
 
     }
 
+    public function getReflexionClassLoad($path)
+    {
+        /** @var ReflexClass $reflexClass */
+        foreach ($this->reflexionLoad as $reflexClass)
+        {
+            if($reflexClass->getPath() == $path)
+            {
+                return $reflexClass->getReflexionClass();
+            }
+        }
+        dump($path);
+        die();
+        $reflexClass = new ReflexClass($path);
+        $this->reflexionLoad->add($reflexClass);
+        return $reflexClass->getReflexionClass();
+    }
 
 
 

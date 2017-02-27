@@ -24,9 +24,45 @@ class ReflexClass
      */
     public function __construct($path)
     {
-       dump($path);
-       die();
+
+        $obj = new $path();
+        $this->reflexionClass = new \ReflectionClass($obj);
+        $this->path = $path;
     }
+
+    /**
+     * @return ReflexClass
+     */
+    public function getReflexionClass()
+    {
+        return $this->reflexionClass;
+    }
+
+    /**
+     * @param ReflexClass $reflexionClass
+     */
+    public function setReflexionClass($reflexionClass)
+    {
+        $this->reflexionClass = $reflexionClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+
 
 
 }
