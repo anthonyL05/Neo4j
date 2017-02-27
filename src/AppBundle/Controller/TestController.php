@@ -16,7 +16,8 @@ class TestController extends Controller
     public function CreeAppAction()
     {
 
-        $this->get('neo4j.application');
+        $app = $this->get('neo4j.application');
+        $app->generateApp();
         die();
     }
 }

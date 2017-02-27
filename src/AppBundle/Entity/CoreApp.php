@@ -6,8 +6,13 @@
  * Date: 26/02/2017
  * Time: 19:36
  */
+
+
 namespace AppBundle\Entity;
-use Neo4jAccesBundle\Annotation\Core;
+
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Neo4jBundle\Annotation\Core;
 
 /**
  * Class CoreApp
@@ -17,7 +22,7 @@ class CoreApp
 {
 
     /**
-     * @Core(collection="true",name="Person")
+     * @Core(collection="true" , name="Person")
      */
     private $person;
 
@@ -26,6 +31,11 @@ class CoreApp
      */
     public function __construct()
     {
-
+        $this->person = new ArrayCollection();
     }
+
+
+
+
+
 }
