@@ -2,18 +2,29 @@
 
 namespace Neo4jBundle\Service;
 
-
+use Neo4jBundle\Annotation\Reader\Reader;
+use Neo4jBundle\Application\Core;
 
 class App
 {
 
-    private $app;
+    /**
+     * Contain the core app
+     */
+    /** @var Core $core */
+    private $core;
 
     public function __construct($app)
     {
         $coreApp = new $app();
+        $reader = new Reader();
+        $this->core = new Core($app,$coreApp,$reader);
         dump($coreApp);
         die();
+    }
 
+    public function generateApp()
+    {
+        $this->core->generate();
     }
 }
