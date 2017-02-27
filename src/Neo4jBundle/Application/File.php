@@ -9,6 +9,7 @@
 namespace Neo4jBundle\Application;
 
 
+use AppBundle\Entity\Person;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class File
@@ -19,6 +20,8 @@ class File
     /** @var  ArrayCollection $paths */
     private $paths;
 
+    private $basePath;
+
     /**
      * File constructor.
      * @param $corePath
@@ -26,42 +29,70 @@ class File
     public function __construct($corePath)
     {
         $this->corePath = $corePath;
+        $this->paths = new ArrayCollection();
         $this->getBasePath();
     }
 
     public function checkClass($className)
     {
-
-        $className = $this->getBasePath()."\\".$className;
+        $className = $this->basePath."\\".$className;
         if($className == $this->corePath)
         {
             /**
              * Todo exeption Core cant refer to Core
              */
         }
-        else
+        else if(!$this->containPaths($className))
         {
-            if(!$this->containPaths($className))
-            {
-                $this->createClass($className);
-            }
+            $className = $this->createClass($className);
+
+            $nameClass = "\\".$this->basePath."\\".$className;
+            $class = new $nameClass();
+            dump($class);
+            die();
         }
     }
 
 
     public function createClass($className)
     {
-        $newClass = fopen('../src'.$className.".php", 'r+');
-        fputs($newClass,"test");
-        fclose($newClass);
+
+        $use = "use Neo4jBundle\\Annotation\\Identifier; \n";
+        $contenuClass = "/** \n *@Identifier() \n */ \n private \$id;\n";
+        $newClassName = explode("\\",$className);
+        $newClassName = array_pop($newClassName);
+        if(!class_exists($this->basePath."\\".$newClassName)) {
+            $content = "<?php \n";
+            $content .= "namespace " . $this->basePath . ";\n";
+            $content .= $use;
+            $content .= "class " . $newClassName . "\n";
+            $content .= "{";
+            $content .= "\n";
+            $content .= $contenuClass;
+            $content .= "}";
+            $newClass = fopen('..\\src\\' . $this->basePath . "\\" . $newClassName . ".php", 'a+');
+            fputs($newClass, $content);
+            fclose($newClass);
+            $this->addPaths($newClassName);
+            $this->__autoload($className);
+        }
+        return $newClassName;
+
     }
 
 
     public function getBasePath()
     {
+
         $basePath = explode("\\",$this->corePath);
         array_pop($basePath);
         $this->basePath = implode("\\",$basePath);
+    }
+
+    public function __autoload($class_name)
+    {
+        $className = '..\\src\\'.$this->basePath."\\".$class_name;
+        include $className.'.php';
     }
 
     /**
@@ -93,5 +124,7 @@ class File
     {
         return $this->paths->contains($paths);
     }
+
+
 
 }
