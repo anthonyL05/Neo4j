@@ -56,7 +56,7 @@ class Reader
                     else
                     {
                         /**
-                         * Todo Return exeption collection doit posséder un nom
+                         * Todo Return exeption the collection need to contains a name
                          */
                     }
                 }
@@ -71,23 +71,26 @@ class Reader
             /** @var \ReflectionClass $reflexionClass */
             $reflexionClass = $this->getReflexionClassLoad($path);
             foreach($reflexionClass->getProperties() as $property) {
-                $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
+                $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Relation');
                 if ($readerProperty) {
-                    if($readerProperty->collection == true)
+                    if($readerProperty->nameDb == true)
                     {
-                        if($readerProperty->name != null)
+                        if($readerProperty->nameRel != null)
                         {
-                           /**
-                            * TODO function pour gerer les propriete collection pour les sous entite
-                            */
-
+                            $this->file->checkRelation($readerProperty,$path);
                         }
                         else
                         {
                             /**
-                             * Todo Return exeption collection doit posséder un nom
+                             * Todo return exeption a relation need to have a relation name
                              */
                         }
+                    }
+                    else
+                    {
+                        /**
+                         * Todo return exeption a relation need to have a db name
+                         */
                     }
                 }
             }
@@ -105,8 +108,6 @@ class Reader
                 return $reflexClass->getReflexionClass();
             }
         }
-        dump($path);
-        die();
         $reflexClass = new ReflexClass($path);
         $this->reflexionLoad->add($reflexClass);
         return $reflexClass->getReflexionClass();
@@ -129,6 +130,7 @@ class Reader
     {
         $this->reflexionClass = $reflexionClass;
     }
+
 
 
 }

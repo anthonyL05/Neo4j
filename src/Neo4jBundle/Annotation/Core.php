@@ -11,6 +11,7 @@ namespace Neo4jBundle\Annotation;
 
 
 use Doctrine\ORM\Mapping\Annotation;
+use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * Class Core
