@@ -10,7 +10,6 @@
 
 namespace AppBundle\Entity;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Neo4jBundle\Annotation\Core;
 
@@ -20,12 +19,14 @@ use Neo4jBundle\Annotation\Core;
  */
 class CoreApp
 {
-
     /**
      * @Core(collection="true" , name="Person")
      */
     private $person;
-
+    /**
+     * @Core(collection="true" , name="Chat")
+     */
+    private $chat;
     /**
      * CoreApp constructor.
      */
