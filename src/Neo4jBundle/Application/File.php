@@ -55,20 +55,36 @@ class File
     public function createClass($className)
     {
 
-        $use = "use Neo4jBundle\\Annotation\\Identifier; \n use Neo4jBundle\\Entity\\GlobalEntity; \n";
-        $contenuClass = "/** \n *@Identifier() \n */ \n private \$id;\n";
-        $contenuClass .= "public function __construct() \n { \n  parent::__construct(); \n  } \n";
+
         $newClassName = explode("\\", $className);
         $newClassName = array_pop($newClassName);
+
         if (!class_exists($this->basePath . "\\" . $newClassName)) {
-            $content = "<?php \n";
-            $content .= "namespace " . $this->basePath . ";\n";
-            $content .= $use;
-            $content .= "class " . $newClassName . " extends GlobalEntity\n";
-            $content .= "{";
-            $content .= "\n";
-            $content .= $contenuClass;
-            $content .= "}";
+            $id = "\$id";
+            $this->basePath = substr($this->basePath,1);
+            $content = <<<EOF
+<?php
+
+namespace $this->basePath;
+
+use Neo4jBundle\\Annotation\\Identifier;
+use Neo4jBundle\\Entity\\GlobalEntity; 
+
+class $newClassName extends GlobalEntity
+{
+
+    /**
+      *@Identifier() 
+      */ 
+    private $id;
+    
+    
+    public function __construct(){
+        parent::__construct();
+    }
+}
+EOF;
+
             $newClass = fopen('..\\src\\' . $this->basePath . "\\" . $newClassName . ".php", 'a+');
             fputs($newClass, $content);
             fclose($newClass);
@@ -86,28 +102,36 @@ class File
         if (!$this->containRelationPaths($readerProperty->nameRel))
         {
             $this->creeRelation($readerProperty, $path);
-            /**
-             * Todo Creat and fill the new Relation
-             */
+            $rel = new $pathRelation();
+            dump($rel);
+            die();
         }
     }
 
     public function creeRelation($readerProperty, $path)
     {
 
+
+
+
+
         $pathRel = "AppBundle\\Relation";
         $pathRelation = "\\".$pathRel. "\\".$readerProperty->nameRel;
-        $use = "use Neo4jBundle\\Entity\\GlobalRelation; \n";
-        $contenuClass = "public function __construct() \n { \n  parent::__construct(); \n  } \n";
         if (!class_exists($pathRelation)) {
-            $content = "<?php \n";
-            $content .= "namespace " . $pathRel . ";\n";
-            $content .= $use;
-            $content .= "class " . $readerProperty->nameRel . " extends GlobalRelation\n";
-            $content .= "{";
-            $content .= "\n";
-            $content .= $contenuClass;
-            $content .= "}";
+            $content = <<<EOF
+<?php
+
+namespace $pathRel ;
+
+use Neo4jBundle\\Entity\\GlobalRelation;
+
+class $readerProperty->nameRel extends GlobalRelation
+{
+    public function __construct(){
+        parent::__construct();
+    }
+}
+EOF;
             $newClass = fopen('..\\src' . $pathRelation . ".php", 'a+');
             fputs($newClass, $content);
             fclose($newClass);

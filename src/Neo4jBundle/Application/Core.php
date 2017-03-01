@@ -54,6 +54,9 @@ class Core
     public function generate()
     {
         $this->reader->generateCore();
+        /**
+         * TODO Create getter had delete add of the different collectio
+         */
         dump($this);
         die();
     }
