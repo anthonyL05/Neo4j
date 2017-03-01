@@ -23,10 +23,7 @@ class CoreApp
      * @Core(collection="true" , name="Person")
      */
     private $person;
-    /**
-     * @Core(collection="true" , name="Chat")
-     */
-    private $chat;
+
     /**
      * CoreApp constructor.
      */
