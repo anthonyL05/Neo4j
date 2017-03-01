@@ -13,9 +13,8 @@ class GlobalRelation
 {
     private $beginNode;
 
-    private $finNode;
+    private $endNode;
 
-    private $relationName;
 
     /**
      * GlobalRelation constructor.
@@ -23,6 +22,43 @@ class GlobalRelation
     public function __construct()
     {
     }
+
+    /**
+     * @return mixed
+     */
+    public function getBeginNode()
+    {
+        return $this->beginNode;
+    }
+
+    /**
+     * @param mixed $beginNode
+     */
+    public function setBeginNode($beginNode)
+    {
+        $this->beginNode = $beginNode;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getEndNode()
+    {
+        return $this->endNode;
+    }
+
+    /**
+     * @param mixed $endNode
+     */
+    public function setEndNode($endNode)
+    {
+        $this->endNode = $endNode;
+    }
+
+
+
+
 
 
 }

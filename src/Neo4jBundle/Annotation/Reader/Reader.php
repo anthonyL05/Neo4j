@@ -50,7 +50,8 @@ class Reader
 
                     if($readerProperty->name != null)
                     {
-                        $this->reflexionLoad->add(new ReflexClass($this->file->checkClass($readerProperty->name)));
+                        $pathFile = $this->file->checkClass($readerProperty->name);
+                        $this->reflexionLoad->add(new ReflexClass($pathFile));
 
                     }
                     else
@@ -65,9 +66,9 @@ class Reader
 
 
 
+
         foreach ($this->file->getPaths() as $path)
         {
-            $path = "\\".$this->file->getBasePath()."\\".$path;
             /** @var \ReflectionClass $reflexionClass */
             $reflexionClass = $this->getReflexionClassLoad($path);
             foreach($reflexionClass->getProperties() as $property) {
@@ -78,6 +79,7 @@ class Reader
                         if($readerProperty->nameRel != null)
                         {
                             $this->file->checkRelation($readerProperty,$path);
+                            $this->file->addCollection($readerProperty,$path,$property);
                         }
                         else
                         {
@@ -100,6 +102,7 @@ class Reader
 
     public function getReflexionClassLoad($path)
     {
+
         /** @var ReflexClass $reflexClass */
         foreach ($this->reflexionLoad as $reflexClass)
         {

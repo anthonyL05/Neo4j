@@ -10,6 +10,7 @@ namespace Neo4jBundle\Application;
 
 
 use AppBundle\Entity\Person;
+use AppBundle\Relation\Friend;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class File
@@ -43,25 +44,24 @@ class File
             /**
              * Todo exeption Core cant refer to Core
              */
-        } else if (!$this->containPaths($className)) {
+        }else if (!$this->containPaths($className)) {
             $className = $this->createClass($className);
             $nameClass = "\\" . $this->basePath . "\\" . $className;
-            return $nameClass;
+
 
         }
+        return $nameClass;
     }
 
 
     public function createClass($className)
     {
 
-
         $newClassName = explode("\\", $className);
         $newClassName = array_pop($newClassName);
 
         if (!class_exists($this->basePath . "\\" . $newClassName)) {
             $id = "\$id";
-            $this->basePath = substr($this->basePath,1);
             $content = <<<EOF
 <?php
 
@@ -90,7 +90,7 @@ EOF;
             fclose($newClass);
             call_user_func(array($this, 'loadRelation'),array("\\".$className));
         }
-        $this->addPaths($newClassName);
+        $this->addPaths($this->basePath . "\\" . $newClassName);
         return $newClassName;
 
     }
@@ -102,10 +102,9 @@ EOF;
         if (!$this->containRelationPaths($readerProperty->nameRel))
         {
             $this->creeRelation($readerProperty, $path);
-            $rel = new $pathRelation();
-            dump($rel);
-            die();
         }
+        $rel = new $pathRelation();
+
     }
 
     public function creeRelation($readerProperty, $path)
@@ -124,7 +123,11 @@ EOF;
 namespace $pathRel ;
 
 use Neo4jBundle\\Entity\\GlobalRelation;
+use Neo4jBundle\\Annotation\\RelationClass;
 
+/**
+ *@RelationClass(name = "$readerProperty->nameDb ")
+ */
 class $readerProperty->nameRel extends GlobalRelation
 {
     public function __construct(){
@@ -154,6 +157,111 @@ EOF;
         array_pop($basePath);
         $this->basePath = implode("\\", $basePath);
     }
+
+    public function addCollection($readerProperty,$path,$property)
+    {
+        $collectionPath = explode("\\",$path);
+        array_pop($collectionPath);
+        array_pop($collectionPath);
+        $collectionPath = implode("\\",$collectionPath);
+        $collectionPath .= "\\Relation\\".$readerProperty->nameRel;
+        $useArrayCollection = "";
+        if($readerProperty != "false")
+        {
+
+            $objFile = fopen('..\\src\\' . $path . ".php", 'a+');
+            $contents = fread($objFile, filesize('..\\src\\' . $path . ".php"));
+            $contents = explode("}",$contents);
+            array_pop($contents);
+            array_pop($contents);
+            $fonctionContent = "";
+            $getMethodeName = "get".ucfirst($property->name);
+            $addMethodeName = "add".ucfirst($property->name);
+            $removeMethodeName = "remove".ucfirst($property->name);
+
+            $use = "";
+            $rel = new $path();
+            if(!method_exists($rel ,$getMethodeName ))
+            {
+                $thisReturn = "\$this->".$property->name;
+                $getMethodeContent = <<<EOF
+                
+    public function $getMethodeName()
+    {
+        return $thisReturn;
+    }
+EOF;
+                $fonctionContent .= $getMethodeContent;
+            }
+            if(!method_exists($rel ,$addMethodeName ))
+            {
+                $use = "use ".$collectionPath.";";
+                $param = "\$".$property->name;
+                $thisAction = "\$this->".$property->name."->add(".$param.")";
+                $thisRetour = "\$this";
+                $addMethodeContent = <<<EOF
+                
+    public function $addMethodeName($readerProperty->nameRel $param)
+    {
+        $thisAction;
+        return $thisRetour;
+    }
+EOF;
+                $fonctionContent .= $addMethodeContent;
+            }
+            if(!method_exists($rel ,$removeMethodeName ))
+            {
+                $use = "use ".$collectionPath.";";
+                $param = "\$".$property->name;
+                $thisAction = "\$this->".$property->name."->remove(".$param.")";
+                $thisRetour = "\$this";
+                $removeMethodeContent = <<<EOF
+                
+    public function $removeMethodeName($readerProperty->nameRel $param)
+    {
+        $thisAction;
+        return $thisRetour;
+    }
+EOF;
+                $fonctionContent .= $removeMethodeContent;
+            }
+        $contents[] = $fonctionContent."\n";
+        $contents = implode("}",$contents);
+        $contents .= "\n }";
+        $newArrayCollection = "\$this->".$property->name ." = new ArrayCollection();";
+        if(!strstr($contents,$newArrayCollection))
+        {
+            $contents = str_replace("parent::__construct();", "parent::__construct();\r\n\t\t".$newArrayCollection, $contents);
+            $useArrayCollection = "use Doctrine\\Common\\Collections\\ArrayCollection;";
+        }
+        if($use != "")
+        {
+            if(!strstr($contents,$use))
+            {
+                if(strstr($contents,"use Neo4jBundle\\Entity\\GlobalEntity;"))
+                {
+                    $replace = <<<EOF
+use Neo4jBundle\\Entity\\GlobalEntity;
+$use
+$useArrayCollection
+EOF;
+                    $contents = str_replace("use Neo4jBundle\\Entity\\GlobalEntity;", $replace, $contents);
+                }
+            }
+        }
+        file_put_contents('..\\src\\' . $path . ".php",$contents);
+        }
+        else
+        {
+            /**
+             * Todo create normal getter setter and condition
+             */
+        }
+    }
+
+
+
+
 
     public function __autoload($class_name,$rel = false)
     {
@@ -212,7 +320,7 @@ EOF;
      */
     public function addRelationPaths($relationPath)
     {
-        $this->paths->add($relationPath);
+        $this->relationPath->add($relationPath);
     }
 
     /**
@@ -220,7 +328,7 @@ EOF;
      */
     public function removeRelationPaths($relationPath)
     {
-        $this->paths->removeElement($relationPath);
+        $this->relationPath->removeElement($relationPath);
     }
 
 

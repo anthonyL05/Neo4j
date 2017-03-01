@@ -28,7 +28,7 @@ class ReflexClass
     {
 
         $path = substr($path,1);
-        $obj = new $path();
+        $obj = new $path;
         $this->reflexionClass = new \ReflectionClass($obj);
         $this->path = $path;
     }

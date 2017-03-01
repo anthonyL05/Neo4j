@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: antho
- * Date: 28/02/2017
- * Time: 09:31
+ * Date: 01/03/2017
+ * Time: 09:46
  */
 
 namespace Neo4jBundle\Annotation;
@@ -13,15 +13,10 @@ use Doctrine\ORM\Mapping\Annotation;
 
 /**
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"Class"})
  */
-class Relation
+class RelationClass
 {
 
-    public $nameDb;
-
-    public $nameRel;
-
-    public $multiple;
-
+    public $name;
 }
