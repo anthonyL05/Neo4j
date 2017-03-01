@@ -9,6 +9,8 @@
 namespace Neo4jBundle\Application;
 
 
+
+
 class ReflexClass
 {
 
@@ -25,7 +27,8 @@ class ReflexClass
     public function __construct($path)
     {
 
-        $obj = new $path();
+        $path = substr($path,1);
+        $obj = new $path;
         $this->reflexionClass = new \ReflectionClass($obj);
         $this->path = $path;
     }
