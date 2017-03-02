@@ -10,7 +10,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Neo4jBundle\Annotation\Core;
 
 /**
@@ -29,11 +28,6 @@ class CoreApp
      */
     public function __construct()
     {
-        $this->person = new ArrayCollection();
-    }
+    }                
 
-
-
-
-
-}
+ }
