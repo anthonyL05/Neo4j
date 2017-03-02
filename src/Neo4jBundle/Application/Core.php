@@ -54,8 +54,7 @@ class Core
     public function generate()
     {
         $this->reader->generateCore();
-        dump($this);
-        die();
+
     }
 
 
