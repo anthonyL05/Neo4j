@@ -225,10 +225,11 @@ EOF;
 EOF;
                 $fonctionContent .= $removeMethodeContent;
             }
-        $contents[] = $fonctionContent."\n";
-        $contents = implode("}",$contents);
-        $contents .= "\n }";
-        $newArrayCollection = "\$this->".$property->name ." = new ArrayCollection();";
+
+            $contents[] = $fonctionContent."\n";
+            $contents = implode("}",$contents);
+            $contents .= "\n }";
+            $newArrayCollection = "\$this->".$property->name ." = new ArrayCollection();";
         if(!strstr($contents,$newArrayCollection))
         {
             $contents = str_replace("parent::__construct();", "parent::__construct();\r\n\t\t".$newArrayCollection, $contents);
@@ -257,6 +258,99 @@ EOF;
              * Todo create normal getter setter and condition
              */
         }
+    }
+
+    public function generateCollection($className,$property,$pathFile)
+    {
+        $pathFile = substr($pathFile,1);
+        $realName = explode("\\",$pathFile);
+        $realName = array_pop($realName);
+        $objFile = fopen('..\\src\\' . $className . ".php", 'a+');
+        $contents = fread($objFile, filesize('..\\src\\' . $className . ".php"));
+        $contents = explode("}",$contents);
+        array_pop($contents);
+        array_pop($contents);
+        $fonctionContent = "";
+        $getMethodeName = "get".ucfirst($property->name);
+        $addMethodeName = "add".ucfirst($property->name);
+        $removeMethodeName = "remove".ucfirst($property->name);
+        $obj = new $className();
+        $use = "";
+        $useArrayCollection = "";
+        if(!method_exists($obj ,$getMethodeName ))
+        {
+            $thisReturn = "\$this->".$property->name;
+            $getMethodeContent = <<<EOF
+                
+    public function $getMethodeName()
+    {
+        return $thisReturn;
+    }
+EOF;
+            $fonctionContent .= $getMethodeContent;
+        }
+        if(!method_exists($obj ,$addMethodeName ))
+        {
+            $use = "use ".$pathFile.";";
+            $param = "\$".$property->name;
+            $thisAction = "\$this->".$property->name."->add(".$param.")";
+            $thisRetour = "\$this";
+            $addMethodeContent = <<<EOF
+                
+    public function $addMethodeName($realName $param)
+    {
+        $thisAction;
+        return $thisRetour;
+    }
+EOF;
+            $fonctionContent .= $addMethodeContent;
+        }
+        if(!method_exists($obj ,$removeMethodeName ))
+        {
+            $use = "use ".$pathFile.";";
+            $param = "\$".$property->name;
+            $thisAction = "\$this->".$property->name."->remove(".$param.")";
+            $thisRetour = "\$this";
+            $removeMethodeContent = <<<EOF
+                
+    public function $removeMethodeName($realName $param)
+    {
+        $thisAction;
+        return $thisRetour;
+    }
+EOF;
+            $fonctionContent .= $removeMethodeContent;
+        }
+        $contents[] = $fonctionContent."\n";
+        $contents = implode("}",$contents);
+        $contents .= "\n }";
+        $newArrayCollection = "\$this->".$property->name ." = new ArrayCollection();";
+        if(!strstr($contents,$newArrayCollection))
+        {
+            $contentsConstruct = explode("public function __construct()",$contents);
+            $contentcons = explode("{",$contentsConstruct[1]);
+            $contentcons[1] = "\r\n\t\t".$newArrayCollection.$contentcons[1];
+            $contentsConstruct[1] = implode("{",$contentcons);
+            $contentsConstruct = implode("public function __construct()",$contentsConstruct);
+            $contents = $contentsConstruct;
+            $useArrayCollection = "use Doctrine\\Common\\Collections\\ArrayCollection;";
+        }
+        if($use != "")
+        {
+            if(!strstr($contents,$use))
+            {
+                if(strstr($contents,"use Neo4jBundle\\Annotation\\Core;"))
+                {
+                    $replace = <<<EOF
+use Neo4jBundle\Annotation\Core;
+$use
+$useArrayCollection
+EOF;
+                    $contents = str_replace("use Neo4jBundle\\Annotation\\Core;", $replace, $contents);
+                }
+            }
+        }
+        file_put_contents('..\\src\\' . $className . ".php",$contents);
     }
 
 

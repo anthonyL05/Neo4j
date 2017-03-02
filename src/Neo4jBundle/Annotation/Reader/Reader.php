@@ -42,20 +42,17 @@ class Reader
     public function generateCore()
     {
 
-        foreach($this->reflexionClass->getProperties() as $property) {
+        foreach ($this->reflexionClass->getProperties() as $property) {
             $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Core');
             if ($readerProperty) {
-                if($readerProperty->collection == true)
-                {
+                if ($readerProperty->collection == true) {
 
-                    if($readerProperty->name != null)
-                    {
+                    if ($readerProperty->name != null) {
                         $pathFile = $this->file->checkClass($readerProperty->name);
                         $this->reflexionLoad->add(new ReflexClass($pathFile));
+                        $this->file->generateCollection($this->reflexionClass->name, $property,$pathFile);
 
-                    }
-                    else
-                    {
+                    } else {
                         /**
                          * Todo Return exeption the collection need to contains a name
                          */
@@ -65,31 +62,22 @@ class Reader
         }
 
 
-
-
-        foreach ($this->file->getPaths() as $path)
-        {
+        foreach ($this->file->getPaths() as $path) {
             /** @var \ReflectionClass $reflexionClass */
             $reflexionClass = $this->getReflexionClassLoad($path);
-            foreach($reflexionClass->getProperties() as $property) {
+            foreach ($reflexionClass->getProperties() as $property) {
                 $readerProperty = $this->annotationReader->getPropertyAnnotation($property, 'Neo4jBundle\Annotation\Relation');
                 if ($readerProperty) {
-                    if($readerProperty->nameDb == true)
-                    {
-                        if($readerProperty->nameRel != null)
-                        {
-                            $this->file->checkRelation($readerProperty,$path);
-                            $this->file->addCollection($readerProperty,$path,$property);
-                        }
-                        else
-                        {
+                    if ($readerProperty->nameDb == true) {
+                        if ($readerProperty->nameRel != null) {
+                            $this->file->checkRelation($readerProperty, $path);
+                            $this->file->addCollection($readerProperty, $path, $property);
+                        } else {
                             /**
                              * Todo return exeption a relation need to have a relation name
                              */
                         }
-                    }
-                    else
-                    {
+                    } else {
                         /**
                          * Todo return exeption a relation need to have a db name
                          */
@@ -97,8 +85,10 @@ class Reader
                 }
             }
         }
-
     }
+
+
+
 
     public function getReflexionClassLoad($path)
     {
