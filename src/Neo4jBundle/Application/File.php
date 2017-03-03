@@ -9,13 +9,10 @@
 namespace Neo4jBundle\Application;
 
 
-use AppBundle\Entity\Person;
-use AppBundle\Relation\Friend;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class File
 {
-
     /** @var  string $corePath */
     private $corePath;
     /** @var  ArrayCollection $paths */
@@ -109,11 +106,6 @@ EOF;
 
     public function creeRelation($readerProperty, $path)
     {
-
-
-
-
-
         $pathRel = "AppBundle\\Relation";
         $pathRelation = "\\".$pathRel. "\\".$readerProperty->nameRel;
         if (!class_exists($pathRelation)) {
@@ -166,11 +158,13 @@ EOF;
         $collectionPath = implode("\\",$collectionPath);
         $collectionPath .= "\\Relation\\".$readerProperty->nameRel;
         $useArrayCollection = "";
+        $usetarget = "";
         if($readerProperty != "false")
         {
 
             $objFile = fopen('..\\src\\' . $path . ".php", 'a+');
             $contents = fread($objFile, filesize('..\\src\\' . $path . ".php"));
+            $contentGlob = $contents;
             $contents = explode("}",$contents);
             array_pop($contents);
             array_pop($contents);
@@ -178,6 +172,7 @@ EOF;
             $getMethodeName = "get".ucfirst($property->name);
             $addMethodeName = "add".ucfirst($property->name);
             $removeMethodeName = "remove".ucfirst($property->name);
+            $createMethodeName = "create".ucfirst($property->name);
 
             $use = "";
             $rel = new $path();
@@ -195,6 +190,8 @@ EOF;
             }
             if(!method_exists($rel ,$addMethodeName ))
             {
+                $targetEntity = $readerProperty->target;
+                $targetPath = "AppBundle\\Entity\\".$targetEntity;
                 $use = "use ".$collectionPath.";";
                 $param = "\$".$property->name;
                 $thisAction = "\$this->".$property->name."->add(".$param.")";
@@ -225,6 +222,40 @@ EOF;
 EOF;
                 $fonctionContent .= $removeMethodeContent;
             }
+            if(!method_exists($rel ,$createMethodeName ))
+            {
+                $targetEntity = $readerProperty->target;
+                $targetPath = "AppBundle\\Entity\\".$targetEntity;
+                $targetPathClass = "\\".$targetPath;
+                if($targetPath != $path)
+                {
+                    if(!strstr($contentGlob,$targetPath))
+                    {
+                        $usetarget = "use ".$targetPath.";";
+                    }
+                }
+                $param = "\$".strtolower($targetEntity);
+                $this->checkClass($targetPathClass);
+                $nomRel = "\$".$property->name;
+                $thisAction = strtolower($nomRel)." = new " .ucfirst($property->name);
+                $thisAction1 = strtolower($nomRel)."->setBeginNode(\$this)";
+                $thisAction2 = strtolower($nomRel)."->setEndNode(".$param.")";
+                $thisAction3 = "\$this->".$addMethodeName."(". strtolower($nomRel).")";
+                $thisRetour = "\$this";
+                $para = "\$param";
+                $createMethodeContent = <<<EOF
+                
+    public function $createMethodeName($targetEntity $param , Array $para = array())
+    {
+        $thisAction;
+        $thisAction1;
+        $thisAction2;
+        $thisAction3;
+        return $thisRetour;
+    }
+EOF;
+                $fonctionContent .= $createMethodeContent;
+            }
 
             $contents[] = $fonctionContent."\n";
             $contents = implode("}",$contents);
@@ -245,6 +276,7 @@ EOF;
 use Neo4jBundle\\Entity\\GlobalEntity;
 $use
 $useArrayCollection
+$usetarget
 EOF;
                     $contents = str_replace("use Neo4jBundle\\Entity\\GlobalEntity;", $replace, $contents);
                 }
