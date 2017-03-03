@@ -24,4 +24,6 @@ class Relation
 
     public $multiple;
 
+    public $target;
+
 }
