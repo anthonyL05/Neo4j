@@ -12,6 +12,7 @@ namespace AppBundle\Entity;
 
 use Neo4jBundle\Annotation\Core;
 
+
 /**
  * Class CoreApp
  * Class Exemple CoreApp for the base entity
@@ -28,6 +29,8 @@ class CoreApp
      */
     public function __construct()
     {
+
     }                
+
 
  }
